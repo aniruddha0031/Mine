@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise For You ❤️</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+            overflow-x: hidden;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            animation: float 10s infinite linear;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .btn-hover:hover {
+            transform: scale(1.03);
+            transition: all 0.2s ease;
+        }
+
+        .quiz-option {
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .quiz-option:hover {
+            background: rgba(255, 255, 255, 0.4);
+            border-color: white;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="heart-container"></div>
+	<audio id="bgMusic" loop preload="auto">
+
+    <source src="gehra-hua.mp3" type="audio/mpeg">
+
+</audio>
+
+    <!-- MAIN SCREEN -->
+    <div id="main-content" class="relative z-10 w-full max-w-5xl px-4 flex flex-col md:flex-row gap-8 items-center justify-center">
+        <!-- Note Panel -->
+        <div class="glass p-6 w-full md:w-80 text-white animate-fade-in">
+            <h3 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                <span>✨</span> My Best Bits
+            </h3>
+            <ul class="space-y-3">
+                <li class="flex items-start gap-2 bg-white/10 p-2 rounded"><span>💖</span> Best hugs in the world.</li>
+                <li class="flex items-start gap-2 bg-white/10 p-2 rounded"><span>🍕</span> Always lets you have the last bite.</li>
+                <li class="flex items-start gap-2 bg-white/10 p-2 rounded"><span>🌟</span> Your biggest supporter ever.</li>
+                <li class="flex items-start gap-2 bg-white/10 p-2 rounded"><span>🎧</span> Patient listener for all your stories.</li>
+                <li class="flex items-start gap-2 bg-white/10 p-2 rounded"><span>🌹</span> Thinks you're the most beautiful soul.</li>
+            </ul>
+        </div>
+
+        <!-- Start Card -->
+        <div id="startCard" class="glass p-8 md:p-12 text-center w-full max-w-md">
+            <div class="mb-6"><span class="text-6xl">💝</span></div>
+            <h1 class="cursive text-5xl text-white mb-8 drop-shadow-md">
+    Will you be my Valentine, <span id="herName"></span>? ❤️
+</h1>
+
+            <div class="flex gap-4 justify-center">
+                <button onclick="openLoveModal()" class="btn-hover px-10 py-3 bg-rose-500 hover:bg-rose-600 text-white rounded-full font-bold shadow-lg text-xl">Yes!</button>
+                <button id="noBtn" 
+class="btn-hover px-10 py-3 bg-white/30 hover:bg-white/40 text-white rounded-full font-bold shadow-md text-xl">
+No
+</button>
+
+            </div>
+            <p id="errorMsg" class="mt-6 text-rose-900 font-semibold bg-white/60 p-2 rounded-lg hidden shake">
+                ⚠️ You chose the incorrect option! Try again.
+            </p>
+        </div>
+    </div>
+
+    <!-- MODAL 1: Love Level -->
+    <div id="loveModal" class="modal-overlay">
+        <div class="glass p-8 text-center max-w-sm w-full text-white">
+            <h2 class="text-3xl font-bold mb-2">I knew it! ❤️</h2>
+            <p class="text-xl mb-6 cursive">I know you love me... but how much?</p>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="checkLove('0%')" class="bg-white/20 hover:bg-white/40 p-3 rounded-lg">0%</button>
+                <button onclick="checkLove('50%')" class="bg-white/20 hover:bg-white/40 p-3 rounded-lg">50%</button>
+                <button onclick="checkLove('100%')" class="bg-white/20 hover:bg-white/40 p-3 rounded-lg">100%</button>
+                <button onclick="checkLove('infinite')" class="bg-rose-500 hover:bg-rose-600 p-3 rounded-lg font-bold">Infinite</button>
+            </div>
+            <p id="loveFeedback" class="mt-4 font-bold text-rose-100 min-h-[1.5em]"></p>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Quiz -->
+    <div id="quizModal" class="modal-overlay">
+        <div class="glass p-8 max-w-xl w-full text-white">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold mb-1">Let's go through some questions?</h2>
+                <p class="text-rose-100 text-sm">Question <span id="qNum">1</span> of 7</p>
+            </div>
+            
+            <div id="quizContent">
+                <p id="questionText" class="text-xl font-semibold mb-6 text-center"></p>
+                <div id="optionsGrid" class="grid gap-3">
+                    <!-- Options injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINAL SCREEN: Summary & Message -->
+    <div id="finalScreen" class="modal-overlay" style="background: linear-gradient(rgba(225,29,72,0.9), rgba(225,29,72,0.95));">
+	<canvas id="fireworksCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
+        <div class="relative z-10 max-w-3xl w-full p-6 text-white overflow-y-auto max-h-screen">
+
+            <div class="text-center mb-8">
+                <h1 class="cursive text-6xl mb-2">Yay! 💖</h1>
+                <div class="inline-block bg-white text-rose-600 px-6 py-2 rounded-full font-bold text-2xl shadow-xl">
+                    Score: 100% Perfect Match!
+                </div>
+            </div>
+			<p id="daysTogether" class="mt-4 text-lg font-bold"></p>
+
+            <div class="glass p-6 mb-8 text-rose-950">
+                <h3 class="text-white text-xl font-bold mb-4 border-b border-white/20 pb-2">Our Memories Summary:</h3>
+                <div id="summaryList" class="space-y-3 text-sm md:text-base">
+                    <!-- Summary items injected here -->
+                </div>
+            </div>
+
+            <div class="text-center bg-white/10 p-6 rounded-2xl mb-8 border border-white/20">
+                <h2 class="text-2xl font-bold text-yellow-300 mb-2">🎁 A Surprise Awaits!</h2>
+                <p class="text-lg">You won a surprise gift for today and will receive it sometime today. Keep your eyes open!</p>
+            </div>
+
+            <div class="text-center">
+                <p class="cursive text-2xl md:text-3xl leading-relaxed mb-8">
+                    "I love you more than words could ever express.<br>
+                    You are my heartbeat, my home, and my greatest adventure.<br>
+                    Every moment with you is a gift I promise to cherish forever.<br>
+                    Happy Valentine's Day to the love of my life!"
+                </p>
+                
+                <div class="bg-black/20 p-4 rounded-lg inline-block text-sm border border-white/10">
+                    <p class="font-bold mb-1">Instruction for my Queen: 👑</p>
+                    <p>Take a screenshot of this screen and send it to me right now!</p>
+                </div>
+				<button onclick="showLetter()" 
+class="mt-6 bg-yellow-400 text-black px-6 py-2 rounded-full font-bold shadow-lg">
+    💌 Open My Secret Letter
+</button>
+
+<div id="loveLetter" class="hidden mt-6 bg-white/20 p-6 rounded-xl text-white">
+    <p class="cursive text-xl leading-relaxed">
+        From the day you entered my life, everything changed.
+        You made my world brighter, my heart softer,
+        and my life more meaningful.
+        I promise to love you in every mood,
+        every phase, and every lifetime. ❤️
+    </p>
+</div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data
+        const questions = [
+            {
+                q: "Most beautiful moment you spent with me?",
+                options: [
+                    "Jab hum Manali gye the?",
+                    "Jab tum mere ghar pehli baar aaye the?",
+                    "Tumhare sath har pal khoobsurat hai",
+                    "Jab tum pehli baar mile the, murthal gye the?"
+                ]
+            },
+            {
+                q: "Agar Kabhi Mujhse Jhagda hoga to kya karna pasand kroge?",
+                options: [
+                    "Mujhe kootna-peetna",
+                    "Baat na karna or chupchaap baithe rehna",
+                    "Intezaaar krna ki mei aakar manau?",
+                    "Bas Akele rehna"
+                ]
+            },
+            {
+                q: "What is my favorite thing about you?",
+                options: [
+                    "Your beautiful smile",
+                    "The way you care for me",
+                    "Your cute little tantrums",
+                    "Everything! You are perfect"
+                ]
+            },
+            {
+                q: "Who is the most dramatic among us?",
+                options: [
+                    "Definitely me (the princess)",
+                    "You (the king of drama)",
+                    "None of us, we're chill",
+                    "Depends on who is hungry!"
+                ]
+            },
+            {
+                q: "Our dream date location would be?",
+                options: [
+                    "A cozy mountain cabin",
+                    "A beach dinner at sunset",
+                    "A busy street food tour",
+                    "Anywhere, as long as we are together"
+                ]
+            },
+            {
+                q: "What makes our bond special?",
+                options: [
+                    "We are best friends first",
+                    "Our late night deep talks",
+                    "How we handle the tough times",
+                    "The pure love we share"
+                ]
+            },
+            {
+                q: "Where do you see us in 5 years?",
+                options: [
+                    "Traveling the world together",
+                    "Building our own little paradise",
+                    "Still annoying each other daily",
+                    "Happier and more in love than today"
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedAnswers = [];
+
+        // UI Functions
+        function createHearts() {
+            const container = document.getElementById('heart-container');
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '❤️';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(heart);
+            }
+        }
+		// Set Her Name
+document.getElementById("herName").innerText = "Jahnvi"; // Replace with her name
+
+        createHearts();
+		// Days Together Counter
+const startDate = new Date("2024-09-29"); // CHANGE to your anniversary date
+const today = new Date();
+const diffTime = today - startDate;
+const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+document.getElementById("daysTogether").innerText =
+    `We’ve been together for ${days} beautiful days ❤️`;
+
+        function handleNoClick() {
+            const error = document.getElementById('errorMsg');
+            error.classList.remove('hidden');
+            error.classList.remove('shake');
+            void error.offsetWidth;
+            error.classList.add('shake');
+        }
+
+function openLoveModal() {
+    document.getElementById('loveModal').style.display = 'flex';
+
+    const music = document.getElementById('bgMusic');
+    music.currentTime = 15;
+
+    const playPromise = music.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(error => {
+            console.log("Autoplay blocked:", error);
+        });
+    }
+}
+
+
+        function checkLove(val) {
+            const feedback = document.getElementById('loveFeedback');
+            if (val === 'infinite') {
+                document.getElementById('loveModal').style.display = 'none';
+                startQuiz();
+            } else {
+                feedback.innerText = "Bas itna he? 🥺 Try again!";
+                feedback.classList.add('shake');
+                setTimeout(() => feedback.classList.remove('shake'), 500);
+            }
+        }
+
+        function startQuiz() {
+            document.getElementById('quizModal').style.display = 'flex';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('qNum').innerText = currentQuestionIndex + 1;
+            document.getElementById('questionText').innerText = q.q;
+            
+            const grid = document.getElementById('optionsGrid');
+            grid.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('div');
+                btn.className = 'quiz-option p-4 rounded-xl border border-white/20 text-center font-medium';
+                btn.innerText = opt;
+                btn.onclick = () => selectAnswer(opt);
+                grid.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(answer) {
+            selectedAnswers.push({
+                question: questions[currentQuestionIndex].q,
+                answer: answer
+            });
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                showFinalSummary();
+            }
+        }
+
+        function showFinalSummary() {
+            document.getElementById('quizModal').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'flex';
+			startFireworks();
+
+            
+            const summaryList = document.getElementById('summaryList');
+            summaryList.innerHTML = '';
+            
+            selectedAnswers.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'bg-white/40 p-3 rounded-lg flex flex-col gap-1';
+                div.innerHTML = `
+                    <span class="font-bold text-rose-900">${index + 1}. ${item.question}</span>
+                    <span class="text-white italic">✨ Your choice: ${item.answer}</span>
+                `;
+                summaryList.appendChild(div);
+            });
+
+            // Trigger explosion hearts
+            for(let i=0; i<40; i++) {
+                setTimeout(createExplosionHeart, i * 80);
+            }
+        }
+
+        function createExplosionHeart() {
+            const h = document.createElement('div');
+            h.innerHTML = Math.random() > 0.5 ? '💖' : '❤️';
+            h.className = 'fixed text-4xl pointer-events-none z-[200]';
+            h.style.left = '50%';
+            h.style.top = '50%';
+            document.body.appendChild(h);
+
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 12 + 4;
+            const vx = Math.cos(angle) * velocity;
+            const vy = Math.sin(angle) * velocity;
+            
+            let x = 0;
+            let y = 0;
+            let opacity = 1;
+
+            const anim = setInterval(() => {
+                x += vx;
+                y += vy;
+                opacity -= 0.015;
+                h.style.transform = `translate(${x}px, ${y}px) scale(${opacity + 0.5})`;
+                h.style.opacity = opacity;
+                if (opacity <= 0) {
+                    clearInterval(anim);
+                    h.remove();
+                }
+            }, 16);
+        }
+// Show Secret Letter
+function showLetter() {
+    document.getElementById('loveLetter').classList.remove('hidden');
+}
+
+// Make No Button Run Away
+const noBtn = document.getElementById('noBtn');
+
+noBtn.addEventListener('mouseover', () => {
+    const x = Math.random() * 200 - 100;
+    const y = Math.random() * 200 - 100;
+    noBtn.style.transform = `translate(${x}px, ${y}px)`;
+});
+// FIREWORKS ANIMATION
+function startFireworks() {
+    const canvas = document.getElementById("fireworksCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const fireworks = [];
+
+    function createFirework() {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height / 2;
+        const particles = [];
+
+        for (let i = 0; i < 30; i++) {
+            particles.push({
+                x: x,
+                y: y,
+                angle: Math.random() * 2 * Math.PI,
+                speed: Math.random() * 4 + 2,
+                radius: 2,
+                alpha: 1
+            });
+        }
+
+        fireworks.push(particles);
+    }
+
+    function animate() {
+        ctx.fillStyle = "rgba(0,0,0,0.1)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        fireworks.forEach((particles, index) => {
+            particles.forEach(p => {
+                p.x += Math.cos(p.angle) * p.speed;
+                p.y += Math.sin(p.angle) * p.speed;
+                p.alpha -= 0.02;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, ${Math.random()*255}, ${Math.random()*255}, ${p.alpha})`;
+                ctx.fill();
+            });
+
+            fireworks[index] = particles.filter(p => p.alpha > 0);
+        });
+
+        requestAnimationFrame(animate);
+    }
+
+    setInterval(createFirework, 800);
+    animate();
+}
+
+    </script>
+</body>
+</html>
