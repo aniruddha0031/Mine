@@ -92,10 +92,8 @@
 <body>
 
     <div id="heart-container"></div>
-	<audio id="bgMusic" loop preload="auto">
-
-    <source src="gehra-hua.mp3" type="audio/mpeg">
-
+<audio id="bgMusic" loop>
+    <source src="./gehra-hua.mp3" type="audio/mpeg">
 </audio>
 
     <!-- MAIN SCREEN -->
@@ -333,15 +331,21 @@ function openLoveModal() {
     document.getElementById('loveModal').style.display = 'flex';
 
     const music = document.getElementById('bgMusic');
-    music.currentTime = 15;
 
-    const playPromise = music.play();
-    if (playPromise !== undefined) {
-        playPromise.catch(error => {
-            console.log("Autoplay blocked:", error);
-        });
-    }
+    music.volume = 1.0;
+
+    // First play
+    music.play().then(() => {
+        // After it starts, jump to 15 seconds
+        music.currentTime = 15;
+        console.log("Music started ❤️");
+    }).catch((error) => {
+        console.log("Playback blocked:", error);
+        alert("Tap again to start music ❤️");
+    });
 }
+
+
 
 
         function checkLove(val) {
@@ -513,7 +517,11 @@ function startFireworks() {
     setInterval(createFirework, 800);
     animate();
 }
-
+document.body.addEventListener("click", function enableMusic() {
+    const music = document.getElementById('bgMusic');
+    music.play().catch(()=>{});
+    document.body.removeEventListener("click", enableMusic);
+});
     </script>
 </body>
 </html>
